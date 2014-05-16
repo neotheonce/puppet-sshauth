@@ -4,6 +4,7 @@ define sshauth::user::ssh_alias (
     $ssh_alias = {},
     $target    = '',
     $order     = 100,
+    $ensure    = 'present'
 ) {
 
     $home = gethomedir($user)
@@ -27,6 +28,7 @@ define sshauth::user::ssh_alias (
     }
 
     concat::fragment { $name:
+        ensure  => $ensure,
         target  => $_target,
         content => template('sshauth/ssh_alias.erb'),
         order   => $order,
