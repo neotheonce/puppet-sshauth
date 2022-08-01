@@ -1,6 +1,10 @@
 sshauth
 =======
 
+**Puppet6**: This fork has been modified to work with puppet version 6.
+
+* * *
+
 Module sshauth provides centralized creation, distribution, and revocation of
 ssh keys for users. This modules was adapted from the ssh::auth module by
 Andrew E. Schulman <andrex at alumni dot utexas dot net>.  For full

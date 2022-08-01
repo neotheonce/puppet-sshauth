@@ -39,15 +39,15 @@
 #   sshauth::key {"unixsys": ensure => 'absent' }
 #
 define sshauth::key (
-    $ensure   = present,
-    $user     = '',
-    $filename = '',
-    $keytype  = 'rsa',
-    $length   = '2048',
-    $maxdays  = '',
-    $mindate  = '',
-    $force    = false,
-    $options  = '',
+    String            $ensure   = 'present',
+    Optional[String]  $user     = undef,
+    Optional[String]  $filename = undef,
+    String            $keytype  = 'rsa',
+    Integer           $length   = '4096',
+    Optional[String]  $maxdays  = undef,
+    Optional[String]  $mindate  = undef,
+    Boolean           $force    = false,
+    Optional[String]  $options  = undef,
 ) {
 
     include "sshauth::params"
@@ -73,14 +73,17 @@ define sshauth::key (
 
 
     # verify syntax of keyname/filename
-    sshauth::key::namecheck { "${name}-name":
+    if $name {
+      sshauth::key::namecheck { "${name}-name":
         parm  => 'name',
         value => $name,
+      }
     }
-
-    sshauth::key::namecheck { "${name}-filename":
+    if $_filename {
+      sshauth::key::namecheck { "${name}-filename":
         parm  => 'filename',
         value => $_filename,
+      }
     }
 
 

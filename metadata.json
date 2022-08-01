@@ -1,0 +1,11 @@
+{
+  "name": "puppet-sshauth",
+  "version": "1.0.0",
+  "author": "Unknown",
+  "summary": "sshauth provides centralized creation, distribution, and revocation of ssh keys for users",
+  "source": "https://github.com/vurbia/puppet-sshauth",
+  "license": "Apache-2.0",
+  "dependencies": [
+	  { "name":"puppetlabs/stdlib","version_requirement":">= 4.13.1" }
+  ]
+}

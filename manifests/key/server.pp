@@ -18,9 +18,9 @@
 #   Sshauth::Key::Server <<| tag == $_tag |>>
 #
 define sshauth::key::server (
-    $ensure,
-    $user,
-    $options,
+    String           $ensure  = 'present',
+    Optional[String] $user    = undef,
+    Optional[String] $options = undef,
 ) {
 
     include sshauth::params

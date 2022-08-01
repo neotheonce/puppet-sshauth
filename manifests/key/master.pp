@@ -5,22 +5,22 @@
 # ssh::auth::key calls it to create virtual keys, which are realized in ssh::auth::keymaster.
 
 define sshauth::key::master (
-    $ensure,
-    $force,
-    $keytype,
-    $length,
-    $maxdays,
-    $mindate
+    String            $ensure  = 'present',
+    Boolean           $force   = false,
+    Optional[String]  $keytype = undef,
+    Optional[Integer] $length  = undef,
+    Optional[String]  $maxdays = undef,
+    Optional[String]  $mindate = undef,
 ) {
     include sshauth::params
     
     Exec { path => '/usr/bin:/usr/sbin:/bin:/sbin' }
     
-    File {
-        owner => 'puppet',
-        group => 'puppet',
-        mode  => '0600',
-    }
+#    File {
+#        owner => 'puppet',
+#        group => 'puppet',
+#        mode  => '0600',
+#    }
 
     $keydir  = "${sshauth::params::keymaster_storage}/${name}"
     $keyfile = "${keydir}/key"
@@ -28,15 +28,22 @@ define sshauth::key::master (
     file { $keydir:
         ensure => directory,
         mode   => '0644',
+        owner  => 'puppet',
+        group  => 'puppet',
     }
     
     file { $keyfile:
         ensure => $ensure,
+        mode   => '0600',
+        owner  => 'puppet',
+        group  => 'puppet',
     }
     
     file { "${keyfile}.pub":
         ensure => $ensure,
         mode   => '0644',
+        owner  => 'puppet',
+        group  => 'puppet',
     }
 
     if $ensure == 'present' {
@@ -44,17 +51,18 @@ define sshauth::key::master (
     # * $force is true, or
     # * $maxdays or $mindate criteria aren't met, or
     # * $keytype or $length have changed
+        $reason = ''
         $keycontent = file("${keyfile}.pub", '/dev/null')
-        if $keycontent {
+        if ! empty($keycontent) {
             if $force {
-        $reason = 'force=true'
+                $reason = 'force=true'
             }
             
-            if !$reason and $mindate and generate('/usr/bin/find', $keyfile, '!', '-newermt', "${mindate}") {
+            if !$reason and !empty($mindate) and generate('/usr/bin/find', $keyfile, '!', '-newermt', "${mindate}") {
                 $reason = "created before ${mindate}"
             }
             
-            if !$reason and $maxdays and generate('/usr/bin/find', $keyfile, '-mtime', "+${maxdays}") {
+            if !$reason and !empty($maxdays) and generate('/usr/bin/find', $keyfile, '-mtime', "+${maxdays}") {
                 $reason = "older than ${maxdays} days"
             }
             
@@ -62,13 +70,13 @@ define sshauth::key::master (
                 if $keytype != $1 {
                     $reason = "keytype changed: $1 -> ${keytype}"
                 } else {
-                    if $length != $2 {
+                    if $length != Integer($2) {
                         $reason = "length changed: $2 -> ${length}"
                     }
                 }
             }
             
-            if $reason {
+            if !empty($reason) {
                 exec { "Revoke previous key ${name}: ${reason}":
                     command => "rm ${keyfile} ${keyfile}.pub",
                     before  => Exec["Create key ${name}: ${keytype}, ${length} bits"],

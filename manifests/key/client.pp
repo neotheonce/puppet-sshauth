@@ -18,9 +18,9 @@
 #   Sshauth::Key::Client <<| tag == $_tag |>>
 #
 define sshauth::key::client (
-    $user,
-    $ensure,
-    $filename,
+    Optional[String] $user     = undef,
+    String           $ensure   = 'present',
+    String           $filename = 'id_rsa',
 ) {
 
     include sshauth::params

@@ -26,9 +26,9 @@
 #   sshauth::client {"unixsys": user => 'agould', ensure => 'absent'}
 #
 define sshauth::client (
-    $ensure = '',
-    $user= '',
-    $filename = '',
+    String           $ensure   = 'present',
+    Optional[String] $user     = undef,
+    String           $filename = 'id_rsa',
 ) {
 
     $_tag = regsubst($name, '@', '_at_')

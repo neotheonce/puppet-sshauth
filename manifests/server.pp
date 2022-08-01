@@ -22,9 +22,9 @@
 #   sshauth::server {"unixsys": ensure => 'absent',user => 'agould'}
 #
 define sshauth::server (
-    $ensure  = '',
-    $user    = '',
-    $options = '',
+    String           $ensure  = 'present',
+    Optional[String] $user    = undef,
+    Optional[String] $options = undef,
 ) {
 
     $_tag = regsubst($name, '@', '_at_')
